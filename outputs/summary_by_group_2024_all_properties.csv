@@ -1,0 +1,5 @@
+group,properties,floor_area_msf,median_site_eui,median_intensity_kg_sf,pct_over_2024,pct_over_2030,max_penalty_2024_musd,max_penalty_2030_musd,pct_properties_using_steam_or_oil
+Historic district,2192.0,197.63,64.35,4.2,6.8,54.43,4.97,30.5,30.16
+Individual landmark,447.0,103.42,69.7,4.84,14.99,64.43,5.7,22.28,41.16
+Not landmarked,21856.0,2333.27,70.8,4.47,10.4,64.01,112.25,556.53,18.78
+All,24495.0,2634.32,70.0,4.45,10.16,63.16,122.92,609.31,20.2
