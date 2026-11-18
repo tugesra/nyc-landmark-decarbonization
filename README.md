@@ -39,6 +39,18 @@ Based on 2024 energy use of 9,872 buildings that must comply with LL97 Article 3
 
 **What this means:** for landmarked buildings, the main LL97 challenge is switching away from steam and oil heating while respecting preservation rules, rather than efficiency alone. The problem is concentrated in a few building types: hotels, offices on district steam, and retail.
 
+## Case study: NYPL's landmark libraries
+
+New York Public Library buildings are city-owned, so LL97 covers them through the city portfolio requirements rather than building-by-building limits. Comparing them with the limit a private library of the same size would face still shows what works. The 2024 data include 36 NYPL libraries, 14 of them landmarked.
+
+![NYPL libraries against the 2030 limit](figures/fig4_nypl_libraries.png)
+
+- **All six all-electric libraries already meet the 2030–2034 limit for a library.** Three of them are individual landmarks built between 1908 and 1920: the 115th Street, Seward Park and Aguilar branches.
+- **29 of the 30 libraries that use natural gas or district steam do not.**
+- The Central Library (Stephen A. Schwarzman Building), heated by district steam, would emit about 5.9 kgCO₂e per sq ft under the 2030 emission factors, against a library limit of 2.22.
+
+Historic library buildings can be electrified, and the electrified ones are where the 2030 targets are already within reach. Building-level results are in `outputs/nypl_buildings_2024.csv`.
+
 ## Method
 
 1. **Benchmarking data.** Calendar year 2024 (the first LL97 compliance year) from the LL84 dataset. One record per property; standalone and parent properties only; 12 months of data; floor area above zero; no default values; site energy use intensity between 10 and 500 kBtu/sq ft (up to 1,000 for energy-intensive uses such as data centers and labs); duplicate reports of the same building removed.
@@ -76,6 +88,7 @@ Based on 2024 energy use of 9,872 buildings that must comply with LL97 Article 3
 | `scripts/01_extract_ll84.py` | Extracts the needed columns from the LL84 download |
 | `scripts/02_ll97_landmark_analysis.py` | Cleaning, LL97 emissions and limits, landmark matching, summaries |
 | `scripts/03_figures.py` | Figures in `figures/` |
+| `scripts/05_nypl_case_study.py` | NYPL case study table and figure |
 | `scripts/04_map_data.py` | GeoJSON for the web map (analysed buildings and other LL97-covered landmarks) |
 | `data/` | LL97 limits table and LL97 pathway by tax lot |
 | `outputs/` | Building-level results and summary tables |
