@@ -3,7 +3,7 @@ import json
 import pandas as pd
 
 d = pd.read_csv('outputs/buildings_ll97_2024.csv')
-d = d[d.article_320_from_2024 & (d.group != 'Not landmarked')].dropna(subset=['Latitude', 'Longitude'])
+d = d[d.in_analysis & (d.group != 'Not landmarked')].dropna(subset=['Latitude', 'Longitude'])
 d['fossil'] = (d.steam + d.oil2 + d.oil4 + d.oil56) > 0
 d['status'] = d.apply(lambda r: 'over_2024' if r.over_2024 else ('over_2030' if r.over_2030 else 'ok_2034'), axis=1)
 feats = []

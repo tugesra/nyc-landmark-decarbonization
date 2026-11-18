@@ -8,11 +8,11 @@ This project matches NYC's building energy benchmarking data (Local Law 84) with
 
 ## Key findings
 
-Based on 2024 energy use of 9,936 buildings that must comply with LL97 Article 320 from 2024:
+Based on 2024 energy use of 9,872 buildings that must comply with LL97 Article 320 from 2024:
 
 ![Share of buildings over LL97 limits](figures/fig1_over_limits.png)
 
-1. **Individual landmarks exceed their 2024–2029 limits 1.6 times as often as other buildings** (12.8% vs 8.0%). Much of the gap comes from their mix of uses: landmarks include more hotels, retail stores and schools. Within offices and apartment buildings, the 2024 rates are similar.
+1. **Individual landmarks exceed their 2024–2029 limits 1.4 times as often as other buildings** (10.9% vs 7.7%). Much of the gap comes from their mix of uses: landmarks include more hotels, retail stores and schools. Within offices and apartment buildings, the 2024 rates are similar.
 
 2. **Half of individual landmarks still rely on district steam or fuel oil**, 2.5 times the rate of non-landmarked buildings (50% vs 20%). Among landmarked offices the share is 48%.
 
@@ -22,23 +22,23 @@ Based on 2024 energy use of 9,936 buildings that must comply with LL97 Article 3
 
    ![2030 exposure by heating fuel](figures/fig3_fuel_2030.png)
 
-4. **Buildings in historic districts, mostly apartment buildings, do better than average** (4.8% over the 2024–2029 limits).
+4. **Buildings in historic districts, mostly apartment buildings, do better than average** (4.7% over the 2024–2029 limits).
 
 5. **Landmarked hotels are the most exposed group**: 22% exceed their 2024–2029 limits and 74% would exceed the 2030–2034 limits.
 
 | Group | Buildings | Median emissions (kgCO₂e/sq ft) | Over 2024–29 limit | Over 2030–34 limit | Use steam or oil | Max penalty from 2030 ($M/yr) |
 |---|---|---|---|---|---|---|
-| Individual landmark | 282 | 4.83 | 12.8% | 61.0% | 50.0% | 17.0 |
-| Historic district | 1,304 | 4.05 | 4.8% | 47.6% | 32.3% | 17.1 |
-| Not landmarked | 8,350 | 4.22 | 8.0% | 54.2% | 19.9% | 231.3 |
-| All | 9,936 | 4.20 | 7.7% | 53.5% | 22.4% | 265.4 |
+| Individual landmark | 276 | 4.70 | 10.9% | 60.1% | 50.4% | 15.6 |
+| Historic district | 1,302 | 4.05 | 4.7% | 47.5% | 32.3% | 17.1 |
+| Not landmarked | 8,294 | 4.21 | 7.7% | 54.0% | 19.9% | 224.8 |
+| All | 9,872 | 4.20 | 7.4% | 53.3% | 22.4% | 257.5 |
 
 **What this means:** for landmarked buildings, the main LL97 challenge is switching away from steam and oil heating while respecting preservation rules, rather than efficiency alone. The problem is concentrated in a few building types: hotels, offices on district steam, and retail.
 
 ## Method
 
 1. **Benchmarking data.** Calendar year 2024 (the first LL97 compliance year) from the LL84 dataset. One record per property; standalone and parent properties only; 12 months of data; floor area above zero; no default values; site energy use intensity between 10 and 500 kBtu/sq ft (up to 1,000 for energy-intensive uses such as data centers and labs); duplicate reports of the same building removed.
-2. **LL97 coverage.** Only tax lots listed on the DOB LL97 Covered Buildings List (filing year 2026) under compliance pathway CP0, Article 320 from 2024. This excludes city-owned buildings, houses of worship and rent-regulated or income-restricted housing, which follow other paths.
+2. **LL97 coverage.** Only tax lots listed on the DOB LL97 Covered Buildings List (filing year 2026) under compliance pathway CP0, Article 320 from 2024. This excludes city-owned buildings, houses of worship and rent-regulated or income-restricted housing, which follow other paths. 64 city-owned properties that sit on lots listed as CP0 are also removed, identified by their agency prefix (for example `DPR_` or `NYPL_`).
 3. **Emissions.** Recomputed from each building's electricity, natural gas, district steam and fuel oil use with the LL97 emission coefficients for 2024–2029 and 2030–2034.
 4. **Limits.** Built from each property's mix of ENERGY STAR property types and their floor areas, using the LL97 limits per property type. About 1.7% of floor area uses property types that are not in the limits table; these are mapped to the closest listed type (see `TYPE_MAP` in the analysis script).
 5. **Landmark status.** A property is an individual landmark or a historic district building if its tax lot (BBL) appears in the LPC building database.
@@ -46,7 +46,7 @@ Based on 2024 energy use of 9,936 buildings that must comply with LL97 Article 3
 
 ### Validation
 
-- Across all Article 320 buildings, the analysis finds 7.7% over the 2024–2029 limits and 53.5% over the 2030–2034 limits at the same energy use. An independent analysis of the 2024 Article 320 reports found 7.5% and 53.8%.
+- Across all Article 320 buildings, the analysis finds 7.4% over the 2024–2029 limits and 53.3% over the 2030–2034 limits at the same energy use. An independent analysis of the 2024 Article 320 reports found 7.5% and 53.8%.
 - Recomputed emissions correlate at 0.99 (log scale) with the emissions reported in LL84.
 - A manual recalculation for the Empire State Building matches the script.
 
@@ -91,7 +91,7 @@ python scripts/04_map_data.py
 
 ## About
 
-By **Esra Tug**, sustainability analyst. This project builds on my master's capstone, *Decarbonizing NYC Buildings, Case Study: New York Public Library* (Pace University, 2024), and my work on the [NYPL Energy & Sustainability Map](https://github.com/tugesra/NYPLEnergyMap).
+By **Esra Tug**. This project builds on my master's capstone, *Decarbonizing NYC Buildings, Case Study: New York Public Library* (Pace University, 2024), and my work on the [NYPL Energy & Sustainability Map](https://github.com/tugesra/NYPLEnergyMap).
 
 Status: preliminary analysis, November 2026.
 

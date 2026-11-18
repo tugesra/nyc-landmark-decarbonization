@@ -11,7 +11,7 @@ plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 11, 'axes.edgeco
                      'figure.facecolor': SURF, 'axes.facecolor': SURF})
 
 d = pd.read_csv('outputs/buildings_ll97_2024.csv')
-d = d[d.article_320_from_2024]
+d = d[d.in_analysis]
 d['fossil'] = (d.steam + d.oil2 + d.oil4 + d.oil56) > 0
 order = ['Individual landmark', 'Historic district', 'Not landmarked']
 n = d.group.value_counts()

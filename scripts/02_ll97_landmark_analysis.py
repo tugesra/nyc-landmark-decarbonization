@@ -167,6 +167,13 @@ def main():
     cbl = pd.read_csv('data/cbl26_pathway_by_bbl.csv', dtype=str).set_index('BBL')['pathway'].to_dict()
     df['ll97_pathways'] = b.map(lambda xs: ','.join(sorted({p for x in xs for p in str(cbl.get(x, '')).split(',') if p})))
     df['article_320_from_2024'] = df['ll97_pathways'].str.contains('0')
+    # City-owned buildings follow the city portfolio path, not Article 320. A few city properties sit on
+    # lots listed as CP0; drop them by their agency prefix (e.g. 'DPR_3728_...', 'NYPL_4598_...').
+    city = df['Property Name'].astype(str).str.match(
+        r'^(DSNY|NYPD|ACS|DOT|DPR|DHS|DCAS|HRA|NYPL|BPL|QPL|DOE|FDNY|TLC|DOHMH|HPD|DEP|DOC|CUNY|NYCHA|DFTA|DCLA|SBS|DYCD|OCME|NY)_\d')
+    print(f'City-owned properties dropped by agency prefix: {(city & df["article_320_from_2024"]).sum()}')
+    df['city_owned'] = city
+    df['in_analysis'] = df['article_320_from_2024'] & ~city
     df['group'] = np.where(df['individual_landmark'], 'Individual landmark',
                   np.where(df['historic_district'], 'Historic district', 'Not landmarked'))
 
@@ -174,7 +181,7 @@ def main():
                 'Largest Property Use Type', 'gfa', 'year_built', 'site_eui', 'ENERGY STAR Score',
                 'em_2024', 'em_2030', 'limit_2024', 'limit_2030', 'excess_2024', 'excess_2030',
                 'penalty_2024', 'penalty_2030', 'over_2024', 'over_2030', 'intensity_kg_sf',
-                'individual_landmark', 'historic_district', 'group', 'll97_pathways', 'article_320_from_2024', 'Latitude', 'Longitude'] + list(FUEL_COLS)
+                'individual_landmark', 'historic_district', 'group', 'll97_pathways', 'article_320_from_2024', 'city_owned', 'in_analysis', 'Latitude', 'Longitude'] + list(FUEL_COLS)
     df[out_cols].to_csv(f'outputs/buildings_ll97_{YEAR}.csv', index=False)
 
     def summary(g):
@@ -191,7 +198,7 @@ def main():
         })
     print('Pathways (all cleaned properties):', df['ll97_pathways'].replace('', 'not on CBL').value_counts().head(8).to_dict())
     df_all = df
-    df = df[df['article_320_from_2024']].copy()
+    df = df[df['in_analysis']].copy()
     print(f'Article 320 (CP0) properties analysed: {len(df)}')
     s = df.groupby('group').apply(summary, include_groups=False).round(2)
     s.loc['All'] = summary(df).round(2)

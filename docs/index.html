@@ -66,7 +66,8 @@ const STATUS = {
   ok_2034:   { color: '#0ca30c', label: 'Within both limits' }
 };
 
-const map = L.map('map', { zoomControl: true }).setView([40.745, -73.975], 12);
+const map = L.map('map', { zoomControl: false }).setView([40.745, -73.975], 12);
+L.control.zoom({ position: 'topright' }).addTo(map);
 
 // Slate blue-gray basemap (same palette as the NYPL Energy & Sustainability Map)
 const C = { land: '#353d49', water: '#5d6f80', park: '#3e5a4b', building: '#2e353f', minor: '#434d5a',
