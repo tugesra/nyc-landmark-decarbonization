@@ -6,6 +6,10 @@ How ready are New York City's landmarked buildings for the city's building carbo
 
 This project matches NYC's building energy benchmarking data (Local Law 84) with the Landmarks Preservation Commission's building database and the Department of Buildings' Local Law 97 Covered Buildings List. It estimates which landmarked buildings exceed their LL97 carbon limits today and in 2030, and why.
 
+## Which landmarks are covered
+
+Most landmarked buildings are too small for LL97. Of 33,228 tax lots in the LPC database, 2,916 (9%) contain a building covered by LL97. About 1,800 of those follow Article 320 from 2024, and 1,578 of them have a usable 2024 energy report and are analysed here. The others either lack a usable report or follow other paths (rent-regulated housing from 2026, Article 321 for houses of worship and some affordable housing, or the city portfolio). The map shows them as grey dots, without an analysis.
+
 ## Key findings
 
 Based on 2024 energy use of 9,872 buildings that must comply with LL97 Article 320 from 2024:
@@ -72,7 +76,7 @@ Based on 2024 energy use of 9,872 buildings that must comply with LL97 Article 3
 | `scripts/01_extract_ll84.py` | Extracts the needed columns from the LL84 download |
 | `scripts/02_ll97_landmark_analysis.py` | Cleaning, LL97 emissions and limits, landmark matching, summaries |
 | `scripts/03_figures.py` | Figures in `figures/` |
-| `scripts/04_map_data.py` | GeoJSON for the web map |
+| `scripts/04_map_data.py` | GeoJSON for the web map (analysed buildings and other LL97-covered landmarks) |
 | `data/` | LL97 limits table and LL97 pathway by tax lot |
 | `outputs/` | Building-level results and summary tables |
 | `docs/` | Interactive map (GitHub Pages) |
