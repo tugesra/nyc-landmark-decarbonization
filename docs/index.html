@@ -41,11 +41,13 @@
   <div class="legend-row"><span class="dot" style="background:#d03b3b"></span>Over the 2024–2029 limit</div>
   <div class="legend-row"><span class="dot" style="background:#fab219"></span>Within 2024 limit, over 2030–2034 limit</div>
   <div class="legend-row"><span class="dot" style="background:#0ca30c"></span>Within both limits</div>
+  <div class="legend-row"><span class="dot" style="background:#8a8f99; width:9px; height:9px; margin:0 1.5px"></span>Covered by LL97 but on another path (not analysed)</div>
   <div class="legend-row"><span class="dot ring" style="background:#9a998f"></span>Larger, ringed dot: individual landmark</div>
   <div class="filters">
     <label><input type="checkbox" id="f-ind" checked> Individual landmarks</label>
     <label><input type="checkbox" id="f-hd" checked> Historic district buildings</label>
     <label><input type="checkbox" id="f-fossil"> Only buildings using steam or fuel oil</label>
+    <label><input type="checkbox" id="f-other" checked> Show landmarks on other LL97 paths (grey)</label>
     <div class="counts" id="counts"></div>
   </div>
   <div class="source">
@@ -122,15 +124,38 @@ function popup(p) {
     </table>`;
 }
 
-let all = [];
+let all = [], others = [];
+const otherLayer = L.layerGroup().addTo(map);
 const layer = L.layerGroup().addTo(map);
+
+function popupOther(p) {
+  return `<h3>${p.name}</h3>
+    <div>${p.address}</div>
+    <div class="status" style="color:#52514e">● Not analysed</div>
+    <table>
+      <tr><td>Designation</td><td>${p.group}${p.district ? ' (' + p.district + ')' : ''}</td></tr>
+      <tr><td>LL97 status</td><td>${p.path}</td></tr>
+    </table>`;
+}
 const order = { ok_2034: 0, over_2030: 1, over_2024: 2 };
 
 function draw() {
   const ind = document.getElementById('f-ind').checked;
   const hd = document.getElementById('f-hd').checked;
   const fossil = document.getElementById('f-fossil').checked;
+  const showOther = document.getElementById('f-other').checked && !fossil;
   layer.clearLayers();
+  otherLayer.clearLayers();
+  let nOther = 0;
+  if (showOther) {
+    for (const f of others) {
+      const p = f.properties, [lng, lat] = f.geometry.coordinates;
+      if ((p.group === 'Individual landmark' && !ind) || (p.group === 'Historic district' && !hd)) continue;
+      nOther++;
+      L.circleMarker([lat, lng], { radius: 3.5, fillColor: '#8a8f99', fillOpacity: 0.75, color: '#1a1a19', weight: 0.8 })
+        .bindPopup(popupOther(p)).addTo(otherLayer);
+    }
+  }
   const shown = all.filter(f => {
     const g = f.properties.group;
     return ((g === 'Individual landmark' && ind) || (g === 'Historic district' && hd)) && (!fossil || f.properties.fossil);
@@ -146,11 +171,15 @@ function draw() {
     }).bindPopup(popup(p)).addTo(layer);
   }
   document.getElementById('counts').textContent =
-    `${fmt(shown.length)} buildings shown: ${n.over_2024} over 2024 limit, ${n.over_2030} over 2030 limit only, ${n.ok_2034} within both`;
+    `${fmt(shown.length)} buildings analysed: ${n.over_2024} over 2024 limit, ${n.over_2030} over 2030 limit only, ${n.ok_2034} within both` +
+    (showOther ? `. ${fmt(nOther)} more on other LL97 paths (grey).` : '');
 }
 
-fetch('landmarks_ll97_2024.geojson').then(r => r.json()).then(g => { all = g.features; draw(); });
-['f-ind', 'f-hd', 'f-fossil'].forEach(id => document.getElementById(id).addEventListener('change', draw));
+Promise.all([
+  fetch('landmarks_ll97_2024.geojson').then(r => r.json()),
+  fetch('landmarks_other_ll97.geojson').then(r => r.json()).catch(() => ({ features: [] }))
+]).then(([g, o]) => { all = g.features; others = o.features; draw(); });
+['f-ind', 'f-hd', 'f-fossil', 'f-other'].forEach(id => document.getElementById(id).addEventListener('change', draw));
 </script>
 </body>
 </html>

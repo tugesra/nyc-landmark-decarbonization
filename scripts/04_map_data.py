@@ -23,3 +23,55 @@ for _, r in d.iterrows():
 json.dump({'type': 'FeatureCollection', 'features': feats}, open('docs/landmarks_ll97_2024.geojson', 'w'),
           separators=(',', ':'))
 print(len(feats), d.status.value_counts().to_dict(), d.group.value_counts().to_dict())
+
+
+# ---------------------------------------------------------------------------
+# Other LL97-covered landmark lots (grey points): covered by LL97 but not in the
+# Article 320 analysis above (other compliance path, or no usable 2024 report).
+import re
+import numpy as np
+
+PATH_LABEL = {
+    '1': 'Rent-regulated housing: LL97 limits start in 2026',
+    '2': 'Income-restricted housing: LL97 limits start in 2035',
+    '3': 'Article 321 (houses of worship, some affordable housing): one-time requirements',
+    '4': 'City-owned: covered by the city portfolio requirements',
+    '0': 'Covered from 2024, but no usable 2024 energy report',
+}
+
+lpc = pd.read_csv('../Individual_Landmark_and_Historic_District_Building_Database.csv',
+                  usecols=['the_geom', 'BBL', 'DESIG_ADDRESS', 'LM_NAME', 'HIST_DISTRICT', 'DATE_HIGH'], low_memory=False)
+lpc['BBL'] = pd.to_numeric(lpc['BBL'], errors='coerce').astype('Int64').astype(str)
+cbl = pd.read_csv('data/cbl26_pathway_by_bbl.csv', dtype=str).set_index('BBL')['pathway'].to_dict()
+on_map = set(b for v in d['NYC Borough, Block and Lot (BBL)'].astype(str) for b in re.findall(r'\d{10}', v))
+
+
+def centroid(wkt):
+    nums = re.findall(r'(-?\d+\.\d+) (-?\d+\.\d+)', str(wkt))
+    if not nums:
+        return None
+    a = np.array(nums, dtype=float)
+    return round(a[:, 0].mean(), 6), round(a[:, 1].mean(), 6)
+
+
+other = []
+for bbl, g in lpc[lpc['BBL'].isin(cbl.keys())].groupby('BBL'):
+    if bbl in on_map:
+        continue
+    paths = cbl[bbl].split(',')
+    key = next((p for p in ['4', '3', '1', '2'] if p in paths), '0')
+    pt = centroid(g['the_geom'].iloc[0])
+    if pt is None:
+        continue
+    names = [n for n in g['LM_NAME'].astype(str) if n not in ('0', 'nan')]
+    districts = [h for h in g['HIST_DISTRICT'].astype(str) if h not in ('0', 'nan')]
+    other.append({'type': 'Feature', 'geometry': {'type': 'Point', 'coordinates': list(pt)},
+                  'properties': {'name': names[0] if names else str(g['DESIG_ADDRESS'].iloc[0]),
+                                 'address': str(g['DESIG_ADDRESS'].iloc[0]),
+                                 'group': 'Individual landmark' if names else 'Historic district',
+                                 'district': districts[0] if districts else '',
+                                 'path': PATH_LABEL[key], 'path_code': key}})
+json.dump({'type': 'FeatureCollection', 'features': other}, open('docs/landmarks_other_ll97.geojson', 'w'),
+          separators=(',', ':'))
+print('other covered landmark lots:', len(other),
+      pd.Series([f['properties']['path_code'] for f in other]).value_counts().to_dict())
