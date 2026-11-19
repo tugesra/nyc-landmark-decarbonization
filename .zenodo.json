@@ -1,0 +1,25 @@
+{
+  "title": "nyc-landmark-decarbonization: code and data for \"Fuel, not age: LL97 exposure of New York City's landmark buildings\"",
+  "upload_type": "software",
+  "description": "<p>Python scripts, derived data, figures and an interactive map for the study <em>Fuel, not age: LL97 exposure of New York City's landmark buildings</em> (Tug, 2026). The code links New York City's 2024 energy benchmarking data (Local Law 84), the Landmarks Preservation Commission building database and the Department of Buildings' Local Law 97 Covered Buildings List, recomputes each building's emissions and limits under LL97, and includes a case study of New York Public Library buildings. Interactive map: https://tugesra.github.io/nyc-landmark-decarbonization/</p>",
+  "creators": [
+    {
+      "name": "Tug, Esra",
+      "affiliation": "Independent Researcher, New York, NY",
+      "orcid": "0009-0006-0209-4436"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "Local Law 97",
+    "building performance standards",
+    "historic preservation",
+    "landmark buildings",
+    "building decarbonization",
+    "district steam",
+    "energy benchmarking",
+    "New York City"
+  ],
+  "access_right": "open",
+  "language": "eng"
+}
