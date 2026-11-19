@@ -44,7 +44,7 @@
   <div class="legend-row"><span class="dot" style="background:#d03b3b"></span>Over the 2024–2029 limit</div>
   <div class="legend-row"><span class="dot" style="background:#fab219"></span>Within 2024 limit, over 2030–2034 limit</div>
   <div class="legend-row"><span class="dot" style="background:#0ca30c"></span>Within both limits</div>
-  <div class="legend-row"><span class="dot" style="background:#8a8f99; width:9px; height:9px; margin:0 1.5px"></span>Covered by LL97 but on another path (not analysed)</div>
+  <div class="legend-row"><span class="dot" style="background:#8a8f99; width:9px; height:9px; margin:0 1.5px"></span>Covered by LL97 but on another path, e.g. city-owned (not analysed)</div>
   <div class="legend-row"><span class="dot ring" style="background:#9a998f"></span>Larger, ringed dot: individual landmark</div>
   <div class="filters">
     <label><input type="checkbox" id="f-ind" checked> Individual landmarks</label>
@@ -120,7 +120,7 @@ function popup(p) {
       <tr><td>Year built</td><td>${p.year_built ?? 'n/a'}</td></tr>
       <tr><td>Floor area</td><td>${fmt(p.gfa)} sq ft</td></tr>
       <tr><td>Energy sources</td><td>${p.fuels}</td></tr>
-      <tr><td>Emissions</td><td>${p.intensity} kgCO₂e/sq ft</td></tr>
+      <tr><td>Emissions</td><td>${p.intensity} kgCO₂e/sq ft now, ${p.intensity30} in 2030 (same energy use, 2030 emission factors)</td></tr>
       <tr><td>Limit 2024–29</td><td>${p.limit24} kgCO₂e/sq ft</td></tr>
       <tr><td>Limit 2030–34</td><td>${p.limit30} kgCO₂e/sq ft</td></tr>
       <tr><td>Max penalty</td><td>${money(p.penalty24)}/yr now, ${money(p.penalty30)}/yr from 2030</td></tr>
@@ -134,7 +134,7 @@ const layer = L.layerGroup().addTo(map);
 function popupOther(p) {
   return `<h3>${p.name}</h3>
     <div>${p.address}</div>
-    <div class="status" style="color:#52514e">● Not analysed</div>
+    <div class="status" style="color:#52514e">● ${p.path_code === '4' ? 'City-owned: city portfolio target, not individual limits' : 'Not analysed'}</div>
     <table>
       <tr><td>Designation</td><td>${p.group}${p.district ? ' (' + p.district + ')' : ''}</td></tr>
       <tr><td>LL97 status</td><td>${p.path}</td></tr>
@@ -155,7 +155,9 @@ function draw() {
       const p = f.properties, [lng, lat] = f.geometry.coordinates;
       if ((p.group === 'Individual landmark' && !ind) || (p.group === 'Historic district' && !hd)) continue;
       nOther++;
-      L.circleMarker([lat, lng], { radius: 3.5, fillColor: '#8a8f99', fillOpacity: 0.75, color: '#1a1a19', weight: 0.8 })
+      const isInd = p.group === 'Individual landmark';
+      L.circleMarker([lat, lng], { radius: isInd ? 6 : 3.5, fillColor: '#8a8f99', fillOpacity: isInd ? 0.9 : 0.75,
+        color: isInd ? '#f0efec' : '#1a1a19', weight: isInd ? 2 : 0.8 })
         .bindPopup(popupOther(p)).addTo(otherLayer);
     }
   }

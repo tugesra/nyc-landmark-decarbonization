@@ -1,0 +1,25 @@
+Boston BERDO exposure, BERDO 2025-reported disclosure (2024 energy data)
+rows 5487, located 3595, analysed 3513, incomplete fuel 453
+median implied electricity factor in data: 195 kg/MWh; 2030 electricity emissions scaled by 259/249 (Appendix B)
+
+By group
+               n  steam_%  oil_%  steam_or_oil_%  gas_%  all_electric_%  over_2025_%  over_2030_%
+group                                                                                            
+district   410.0      3.2    9.3            12.4   79.3             8.3         23.2         63.7
+landmark    43.0     25.6    0.0            25.6   67.4             7.0         11.6         39.5
+other     3060.0      5.3    5.1            10.3   81.5             8.1         25.4         61.5
+
+By fuel
+                   n  steam_%  oil_%  steam_or_oil_%  gas_%  all_electric_%  over_2025_%  over_2030_%
+fuel                                                                                                 
+all-electric   286.0      0.0    0.0             0.0    0.0           100.0          3.8         15.7
+gas           2849.0      0.0    0.0             0.0  100.0             0.0         25.4         64.9
+oil            193.0      0.0  100.0           100.0    0.0             0.0         50.8         80.3
+steam          185.0    100.0    0.0           100.0    0.0             0.0         22.7         60.5
+
+Reporting compliance status by group (% of located buildings)
+official_status  in compliance  pending revisions  state
+group                                                   
+district                  93.2                6.5    0.2
+landmark                  93.2                6.8    0.0
+other                     94.0                4.7    1.3

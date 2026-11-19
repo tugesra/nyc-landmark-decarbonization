@@ -41,6 +41,12 @@ Based on 2024 energy use of 9,872 buildings that must comply with LL97 Article 3
 
 **What this means:** for landmarked buildings, the main LL97 challenge is switching away from steam and oil heating while respecting preservation rules, rather than efficiency alone. The problem is concentrated in a few building types: hotels, offices on district steam, and retail.
 
+## Seattle and Boston
+
+The same method applied to Seattle's Building Emissions Performance Standard and Boston's BERDO 2.0 (2024 data). Landmarks rely on district steam far more than other buildings in both cities (Seattle 18% vs 2%; Boston 26% vs 5%). In Seattle, where steam counts about 28 times more than City Light electricity, 47% of landmarks would miss their 2031–2035 target against 28% of other buildings. In Boston, where steam counts about the same as grid electricity, landmarks are less exposed than other buildings (40% vs 62% over the 2030–2034 standard).
+
+**Maps:** [Seattle](https://tugesra.github.io/nyc-landmark-decarbonization/seattle.html) · [Boston](https://tugesra.github.io/nyc-landmark-decarbonization/boston.html). **Code and outputs:** `multi-city/`. The raw city data are not included; download links are listed in `multi-city/README.md`.
+
 ## Case study: NYPL's landmark libraries
 
 New York Public Library buildings are city-owned, so LL97 covers them through the city portfolio requirements rather than building-by-building limits. Comparing them with the limit a private library of the same size would face is still instructive, because the portfolio shares one building type and one owner but differs in age and fuel. The 2024 data include 36 NYPL libraries, 14 of them landmarked.
@@ -95,7 +101,8 @@ The portfolio illustrates the main finding: almost every library that burns gas 
 | `scripts/04_map_data.py` | GeoJSON for the web map (analysed buildings and other LL97-covered landmarks) |
 | `data/` | LL97 limits table and LL97 pathway by tax lot |
 | `outputs/` | Building-level results and summary tables |
-| `docs/` | Interactive map (GitHub Pages) |
+| `multi-city/` | Seattle and Boston analysis: scripts, summary results and landmark match lists (see `multi-city/README.md`) |
+| `docs/` | Interactive maps for New York, Seattle and Boston (GitHub Pages) |
 
 ## Reproduce
 

@@ -18,6 +18,7 @@ for _, r in d.iterrows():
                       'year_built': None if pd.isna(r.year_built) else int(r.year_built),
                       'gfa': int(r.gfa), 'status': r.status, 'fossil': bool(r.fossil), 'fuels': ', '.join(fuels),
                       'intensity': round(r.intensity_kg_sf, 2),
+                      'intensity30': round(r.em_2030 * 1000 / r.gfa, 2),  # same 2024 energy use, 2030-2034 emission factors
                       'limit24': round(r.limit_2024 * 1000 / r.gfa, 2), 'limit30': round(r.limit_2030 * 1000 / r.gfa, 2),
                       'penalty24': int(round(r.penalty_2024)), 'penalty30': int(round(r.penalty_2030))}})
 json.dump({'type': 'FeatureCollection', 'features': feats}, open('docs/landmarks_ll97_2024.geojson', 'w'),
