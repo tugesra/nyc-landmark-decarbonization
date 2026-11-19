@@ -14,6 +14,8 @@
     background: rgba(26, 26, 25, 0.92); color: #f0efec; border-radius: 10px; padding: 14px 16px;
     box-shadow: 0 2px 12px rgba(0,0,0,.35); font-size: 13px; line-height: 1.45;
   }
+  .cities { font-size: 12px; margin-bottom: 8px; color: #c3c2b7; }
+  .cities a { color: #9fc3f0; text-decoration: none; }
   .panel h1 { font-size: 16px; margin: 0 0 4px; }
   .panel p { margin: 4px 0 10px; color: #c3c2b7; }
   .legend-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
@@ -36,6 +38,7 @@
 <body>
 <div id="map"></div>
 <div class="panel">
+  <div class="cities"><b>New York</b> · <a href="seattle.html">Seattle</a> · <a href="boston.html">Boston</a></div>
   <h1>NYC landmarks under Local Law 97</h1>
   <p>Landmarked buildings covered by LL97 (Article 320), colored by whether their 2024 energy use would exceed the carbon limits.</p>
   <div class="legend-row"><span class="dot" style="background:#d03b3b"></span>Over the 2024–2029 limit</div>

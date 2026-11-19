@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seattle landmarks under BEPS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<style>
+  html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #map { position: absolute; inset: 0; background: #353d49; }
+  .panel {
+    position: absolute; z-index: 1000; top: 12px; left: 12px; max-width: 330px;
+    background: rgba(26, 26, 25, 0.92); color: #f0efec; border-radius: 10px; padding: 14px 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.35); font-size: 13px; line-height: 1.45;
+  }
+  .cities { font-size: 12px; margin-bottom: 8px; color: #c3c2b7; }
+  .cities a { color: #9fc3f0; text-decoration: none; }
+  .cities { font-size: 12px; margin-bottom: 8px; color: #c3c2b7; }
+  .cities a { color: #9fc3f0; text-decoration: none; }
+  .panel h1 { font-size: 16px; margin: 0 0 4px; }
+  .panel p { margin: 4px 0 10px; color: #c3c2b7; }
+  .legend-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+  .ring { box-shadow: 0 0 0 2px #f0efec; }
+  .filters { margin-top: 10px; border-top: 1px solid #3a3a37; padding-top: 8px; }
+  .filters label { display: block; margin: 3px 0; cursor: pointer; }
+  .counts { color: #c3c2b7; font-size: 12px; margin-top: 6px; }
+  .source { color: #9a998f; font-size: 11px; margin-top: 8px; }
+  .source a { color: #9fc3f0; }
+  .leaflet-popup-content { font-size: 13px; line-height: 1.45; min-width: 230px; }
+  .leaflet-popup-content h3 { margin: 0 0 4px; font-size: 14px; }
+  .leaflet-popup-content table { border-collapse: collapse; width: 100%; margin-top: 6px; }
+  .leaflet-popup-content td { padding: 2px 0; vertical-align: top; }
+  .leaflet-popup-content td:first-child { color: #52514e; padding-right: 10px; white-space: nowrap; }
+  .status { font-weight: 600; }
+  @media (max-width: 600px) { .panel { max-width: calc(100% - 48px); font-size: 12px; } }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="panel">
+  <div class="cities"><a href="index.html">New York</a> · <b>Seattle</b> · <a href="boston.html">Boston</a></div>
+  <h1>Seattle landmarks under BEPS</h1>
+  <p>Seattle landmarks and historic-district buildings covered by the Building Emissions Performance Standard, colored by whether their 2024 energy use would meet the emissions targets. District steam counted.</p>
+  <div class="legend-row"><span class="dot" style="background:#d03b3b"></span>Over the 2031–2035 target</div>
+  <div class="legend-row"><span class="dot" style="background:#fab219"></span>Within 2031–35, over the 2036–2040 target</div>
+  <div class="legend-row"><span class="dot" style="background:#0ca30c"></span>Within both targets</div>
+  <div class="legend-row"><span class="dot" style="background:#5aa9e6"></span>All-electric (exempt from targets)</div>
+  <div class="legend-row"><span class="dot ring" style="background:#9a998f"></span>Larger, ringed dot: individual landmark</div>
+  <div class="filters">
+    <label><input type="checkbox" id="f-ind" checked> Individual landmarks</label>
+    <label><input type="checkbox" id="f-hd" checked> Historic district buildings</label>
+    <label><input type="checkbox" id="f-fossil"> Only buildings on district steam</label>
+    <div class="counts" id="counts"></div>
+  </div>
+  <div class="source">
+    Data: Seattle Building Energy Benchmarking (2024), Seattle City Landmarks and Historic &amp; Special Review Districts. Targets and factors: OSE BEPS Director's Rule 2025-01 (provisional 2031–35 factors). Steam emissions can be deducted in 2031–35 only. Exposure assumes 2024 energy use does not change.
+    <a href="https://github.com/tugesra/nyc-landmark-decarbonization">Method and code</a> · Esra Tug
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.4/dist/leaflet-maplibre-gl.js"></script>
+<script>
+const STATUS = {"over_2031": {"color": "#d03b3b", "label": "Over the 2031–2035 target"}, "over_2036": {"color": "#fab219", "label": "Within 2031–35, over the 2036–2040 target"}, "ok": {"color": "#0ca30c", "label": "Within both targets"}, "exempt": {"color": "#5aa9e6", "label": "All-electric (exempt from targets)"}};
+const ORDER = {"exempt": 0, "ok": 1, "over_2036": 2, "over_2031": 3};
+const FUEL = { steam: 'District steam', oil: 'Fuel oil', gas: 'Natural gas', 'all-electric': 'All-electric' };
+const map = L.map('map', { zoomControl: false }).setView([47.612, -122.335], 14);
+L.control.zoom({ position: 'topright' }).addTo(map);
+const CARTO_KEY = 'cb1_5bsm_1_69d69230e290e168598f1701';
+const ATTRIBUTION = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>';
+// Slate blue-gray basemap (same palette as the NYPL Energy & Sustainability Map)
+const C = { land: '#353d49', water: '#5d6f80', park: '#3e5a4b', building: '#2e353f', minor: '#434d5a',
+  secondary: '#55667d', primary: '#5f7aa0', motorway: '#7393c4', casing: '#2a3039', rail: '#596473',
+  boundary: '#56606d', text: '#b8c3d1', halo: '#262c35' };
+function recolor(style) {
+  for (const l of style.layers) {
+    const id = l.id, p = (l.paint = l.paint || {});
+    if (l.type === 'background') p['background-color'] = C.land;
+    else if (id.startsWith('water') && l.type === 'fill') p['fill-color'] = C.water;
+    else if (id === 'waterway') p['line-color'] = C.water;
+    else if (id.startsWith('park') || id === 'landcover') { p['fill-color'] = C.park; p['fill-opacity'] = 0.8; }
+    else if (id === 'landuse') { p['fill-color'] = C.park; p['fill-opacity'] = 0.6; }
+    else if (id === 'landuse_residential') p['fill-opacity'] = 0;
+    else if (id.startsWith('building')) p['fill-color'] = C.building;
+    else if (l.type === 'line') {
+      if (id.includes('_case')) p['line-color'] = C.casing;
+      else if (/(mot|trunk)/.test(id)) p['line-color'] = C.motorway;
+      else if (/pri/.test(id)) p['line-color'] = C.primary;
+      else if (/sec/.test(id)) p['line-color'] = C.secondary;
+      else if (/(minor|service|path|aeroway)/.test(id)) p['line-color'] = C.minor;
+      else if (/rail/.test(id)) p['line-color'] = C.rail;
+      else if (/boundary/.test(id)) p['line-color'] = C.boundary;
+    }
+    if (l.type === 'symbol') { p['text-color'] = C.text; p['text-halo-color'] = C.halo; p['text-opacity'] = 0.7; p['icon-opacity'] = 0.6; }
+  }
+  return style;
+}
+fetch('https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json?key=' + CARTO_KEY)
+  .then(r => r.json())
+  .then(style => L.maplibreGL({ style: recolor(style), attribution: ATTRIBUTION }).addTo(map))
+  .catch(() => L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=' + CARTO_KEY,
+    { attribution: ATTRIBUTION }).addTo(map));
+
+
+const fmt = n => n.toLocaleString('en-US');
+function popup(p) {
+  const s = STATUS[p.status];
+  return `<h3>${p.name}</h3>
+    <div>${p.address ?? ''}</div>
+    <div class="status" style="color:${s.color === '#fab219' ? '#9a6a00' : s.color}">● ${s.label}</div>
+    <table>
+      <tr><td>Designation</td><td>${p.group}${p.landmark ? ': ' + p.landmark : ''}${p.district ? ' (' + p.district + ')' : ''}</td></tr>
+      <tr><td>Main use</td><td>${p.use ?? 'n/a'}</td></tr>
+      <tr><td>Year built</td><td>${p.year_built ?? 'n/a'}</td></tr>
+      <tr><td>Floor area</td><td>${fmt(p.gfa)} sq ft</td></tr>
+      <tr><td>Heating fuel</td><td>${FUEL[p.fuel]}</td></tr>
+      <tr><td>Emissions</td><td>${p.ghgi} kgCO₂e/sq ft${p.fuel === 'steam' ? ' (' + p.ghgi_ded + ' with steam deducted)' : ''}</td></tr>
+      <tr><td>Target 2031–35</td><td>${p.t2031} kgCO₂e/sq ft</td></tr>
+      <tr><td>Target 2036–40</td><td>${p.t2036} kgCO₂e/sq ft</td></tr>
+    </table>`;
+}
+let all = [];
+const layer = L.layerGroup().addTo(map);
+function draw() {
+  const ind = document.getElementById('f-ind').checked, hd = document.getElementById('f-hd').checked, fossil = document.getElementById('f-fossil').checked;
+  layer.clearLayers();
+  const shown = all.filter(f => { const g = f.properties.group;
+    return ((g === 'Individual landmark' && ind) || (g === 'Historic district' && hd)) && (!fossil || f.properties.steam); })
+    .sort((a, b) => ORDER[a.properties.status] - ORDER[b.properties.status]);
+  const n = {};
+  for (const f of shown) {
+    const p = f.properties, [lng, lat] = f.geometry.coordinates, isInd = p.group === 'Individual landmark';
+    n[p.status] = (n[p.status] || 0) + 1;
+    L.circleMarker([lat, lng], { radius: isInd ? 7 : 4.5, fillColor: STATUS[p.status].color, fillOpacity: 0.9,
+      color: isInd ? '#f0efec' : '#1a1a19', weight: isInd ? 2 : 1 }).bindPopup(popup(p)).addTo(layer);
+  }
+  document.getElementById('counts').textContent = `${fmt(shown.length)} buildings: ` +
+    Object.keys(STATUS).map(k => `${n[k] || 0} ${STATUS[k].label.toLowerCase()}`).join(', ');
+}
+fetch('seattle_landmarks.geojson').then(r => r.json()).then(g => { all = g.features; draw(); });
+['f-ind', 'f-hd', 'f-fossil'].forEach(id => document.getElementById(id).addEventListener('change', draw));
+</script>
+<script data-goatcounter="https://esratug.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
