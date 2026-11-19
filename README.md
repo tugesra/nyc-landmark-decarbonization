@@ -1,5 +1,7 @@
 # NYC Landmarks under Local Law 97
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24378285.svg)](https://doi.org/10.5281/zenodo.24378285)
+
 How ready are New York City's landmarked buildings for the city's building carbon limits, and what holds them back?
 
 **Interactive map:** https://tugesra.github.io/nyc-landmark-decarbonization/
