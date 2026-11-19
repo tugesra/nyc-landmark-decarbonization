@@ -41,15 +41,15 @@ Based on 2024 energy use of 9,872 buildings that must comply with LL97 Article 3
 
 ## Case study: NYPL's landmark libraries
 
-New York Public Library buildings are city-owned, so LL97 covers them through the city portfolio requirements rather than building-by-building limits. Comparing them with the limit a private library of the same size would face still shows what works. The 2024 data include 36 NYPL libraries, 14 of them landmarked.
+New York Public Library buildings are city-owned, so LL97 covers them through the city portfolio requirements rather than building-by-building limits. Comparing them with the limit a private library of the same size would face is still instructive, because the portfolio shares one building type and one owner but differs in age and fuel. The 2024 data include 36 NYPL libraries, 14 of them landmarked.
 
 ![NYPL libraries against the 2030 limit](figures/fig4_nypl_libraries.png)
 
-- **All six all-electric libraries already meet the 2030–2034 limit for a library.** Three of them are individual landmarks built between 1908 and 1920: the 115th Street, Seward Park and Aguilar branches.
-- **29 of the 30 libraries that use natural gas or district steam do not.**
+- **29 of the 30 libraries that report natural gas or district steam in 2024 would exceed the 2030–2034 limit for a library.** The exception is Mott Haven, a 1905 branch in a historic district.
 - The Central Library (Stephen A. Schwarzman Building), heated by district steam, would emit about 5.9 kgCO₂e per sq ft under the 2030 emission factors, against a library limit of 2.22.
+- **Five libraries have incomplete fuel data.** The 115th Street, Seward Park and Aguilar branches (all individual landmarks) and the High Bridge and West Farms branches report no fossil fuel in 2024 but report natural gas in 2022, 2023 or 2025. Their 2024 emissions are understated, so the figure shows them separately. Only the Charleston branch (built 2021) reports no fossil fuel in any year.
 
-Historic library buildings can be electrified, and the electrified ones are where the 2030 targets are already within reach. Building-level results are in `outputs/nypl_buildings_2024.csv`.
+The portfolio illustrates the main finding: almost every library that burns gas or uses steam, landmarked or not, is far from 2030-level performance. It also shows that a benchmarking record can omit a fuel entirely and make a building look electric; checking fuel use across several reporting years catches most such cases. Building-level results are in `outputs/nypl_buildings_2024.csv`.
 
 ## Method
 
@@ -62,7 +62,8 @@ Historic library buildings can be electrified, and the electrified ones are wher
 
 ### Validation
 
-- Across all Article 320 buildings, the analysis finds 7.4% over the 2024–2029 limits and 53.3% over the 2030–2034 limits at the same energy use. An independent analysis of the 2024 Article 320 reports found 7.5% and 53.8%.
+- Across all Article 320 buildings, the analysis finds 7.4% over the 2024–2029 limits and 53.3% over the 2030–2034 limits at the same energy use. The Department of Buildings reports that 5% of 2024 Article 320 filings were over their limits ([DOB, 2026](https://www.nyc.gov/assets/buildings/pdf/ll97yr1.pdf)); the official share covers only buildings that filed, after deductions and adjustments. For 2030, [Urban Green Council](https://www.urbangreencouncil.org/?p=10250) finds that 43% of covered buildings meet their limits on 2024 benchmarking data, close to the 46.7% implied here.
+- LL84 records a missing fuel as "Not Available", which the analysis reads as zero. Of the 530 sample buildings with no fossil fuel in 2024, 207 report fossil fuel in 2022, 2023 or 2025. Dropping them changes the shares over the limits by at most one percentage point.
 - Recomputed emissions correlate at 0.99 (log scale) with the emissions reported in LL84.
 - A manual recalculation for the Empire State Building matches the script.
 
@@ -70,7 +71,7 @@ Historic library buildings can be electrified, and the electrified ones are wher
 
 - Uses the ENERGY STAR property-type limits. For 2024–2029, owners may instead use the occupancy-group limits in the law, which are sometimes higher.
 - Penalties are the legal maximum. Deductions, such as renewable energy credits and beneficial electrification credits, are not modeled.
-- Benchmarking data are self-reported and may contain errors.
+- Benchmarking data are self-reported and may contain errors. Fuels missing from a record are read as zero (see Validation).
 - Landmark status is matched by tax lot. A lot can contain both landmarked and non-landmarked buildings.
 
 ## Data sources
@@ -78,7 +79,7 @@ Historic library buildings can be electrified, and the electrified ones are wher
 - [NYC Building Energy and Water Data Disclosure for Local Law 84 (2023–present)](https://data.cityofnewyork.us/d/5zyy-y8am), NYC Open Data
 - [LPC Individual Landmark and Historic District Building Database](https://data.cityofnewyork.us/d/gpmc-yuvp), NYC Open Data
 - [DOB Sustainability Laws Covered Buildings List 2026](https://www.nyc.gov/assets/buildings/excel/cbl26.xlsx), NYC Department of Buildings
-- LL97 limits and emission coefficients: NYC Administrative Code §28-320 and 1 RCNY §103-14, as tabulated by [greencalculus.com](https://greencalculus.com/standards/nyc-local-law-97/)
+- LL97 limits and emission coefficients: [NYC Administrative Code, Title 28, Article 320](https://codelibrary.amlegal.com/codes/newyorkcity/latest/NYCadmin/0-0-0-158933) and [1 RCNY §103-14](https://www.nyc.gov/assets/buildings/rules/1_RCNY_103-14.pdf). The limits table was first compiled from [greencalculus.com](https://greencalculus.com/standards/nyc-local-law-97/) and spot-checked against the rule; values are rounded to two decimals.
 - Basemap: © OpenStreetMap contributors © CARTO
 
 ## Repository contents
